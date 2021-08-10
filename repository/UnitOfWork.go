@@ -24,7 +24,7 @@ func (uow *UnitOfWork) RollingBack() {
 	}
 }
 
-func (uow *UnitOfWork) Commit() {
+func (uow *UnitOfWork) Committing() {
 	if !uow.ReadOnly && !uow.Committed {
 		uow.DB.Commit()
 	}
