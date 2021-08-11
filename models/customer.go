@@ -1,7 +1,9 @@
 package models
 
+import "gorm.io/gorm"
+
 type Customer struct {
-	// gorm.Model
+	gorm.Model
 	UserID    string `gorm:"type:varchar(20);unique_key;not_null;" json:"id"`
 	Fname     string `gorm:"type:varchar(20);" json:"fname"`
 	Lname     string `gorm:"type:varchar(20);" json:"lname"`

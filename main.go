@@ -19,18 +19,23 @@ func main() {
 	m := mux.NewRouter()
 	route := m.PathPrefix("/api/go").Subrouter()
 	repo := repository.NewRepositorySRV()
-	header := handlers.AllowedHeaders([]string{"Content-Type", "application/json"})
+	header := handlers.AllowedHeaders([]string{"Content-Type", "token"})
+	methods := handlers.AllowedMethods([]string{"PUT", "DELETE", "GET", "POST", "OPTION"})
+	origin := handlers.AllowedOrigins([]string{"*"})
 	srv := &http.Server{
-		Handler:      handlers.CORS(header)(route),
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
+		Handler:      handlers.CORS(header, methods, origin)(route),
+		WriteTimeout: 150 * time.Second,
+		ReadTimeout:  150 * time.Second,
 		Addr:         ":9000",
 	}
+
 	fmt.Print("Hi above ini")
-	m.HandleFunc("/", Index)
+	route.HandleFunc("/index", index)
 	initiateController(conn, route, repo)
 	fmt.Print("above listen")
 	log.Fatal(srv.ListenAndServe())
+	// go hold(srv)
+
 	fmt.Print("After listen")
 	defer func() {
 		conn.Close()
@@ -42,7 +47,12 @@ func initiateController(conn *gorm.DB, route *mux.Router, repo *repository.Repos
 	custController := controllers.NewCustomerController(custSrv)
 	custController.CustomerRoute(route)
 }
-func Index(w http.ResponseWriter, r *http.Request) {
-	fmt.Print("HHHHHHHHHHHHHH")
+
+func index(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Welcome Customer"))
 }
+
+// func hold(srv *http.Server) {
+// 	time.Sleep(200 * time.Second)
+// 	srv.ListenAndServe()
+// }

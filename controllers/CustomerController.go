@@ -2,13 +2,13 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/gowidsg/go-saloon/models"
 	"github.com/gowidsg/go-saloon/services"
-	"github.com/mitchellh/mapstructure"
 )
 
 type CustomerController struct {
@@ -20,19 +20,28 @@ func NewCustomerController(custsrv *services.CustomerServices) *CustomerControll
 }
 
 func (custController *CustomerController) CustomerRoute(route *mux.Router) {
-	route.HandleFunc("customer", custController.createCustomer).Methods("POST")
+	fmt.Print("Hi Customer Route")
+	route.HandleFunc("/customer", custController.createCustomer).Methods("POST")
 }
 
 func (custController *CustomerController) createCustomer(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	var custStruct models.Customer
-	err := mapstructure.Decode(params, &custStruct)
-	if err != nil {
-		log.Fatal("Cannot Decode the param values ", err)
-	}
-	err = custController.CustSRV.AddCustomer(&custStruct)
+	// params := mux.Vars(&r)
+
+	// fmt.Println(params)
+
+	// var custStruct models.Customer
+	var xyz models.Customer
+
+	json.NewDecoder(r.Body).Decode(&xyz)
+	fmt.Println(xyz)
+	// err := mapstructure.Decode(params, &custStruct)
+	// if err != nil {
+	// 	log.Fatal("Cannot Decode the param values ", err)
+	// }
+	// fmt.Println(custStruct)
+	err := custController.CustSRV.AddCustomer(&xyz)
 	if err != nil {
 		log.Fatal("Customer not added ", err)
 	}
-	json.NewEncoder(w).Encode(params)
+	json.NewEncoder(w).Encode(xyz)
 }
