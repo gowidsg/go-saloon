@@ -25,23 +25,23 @@ func (custController *CustomerController) CustomerRoute(route *mux.Router) {
 }
 
 func (custController *CustomerController) createCustomer(w http.ResponseWriter, r *http.Request) {
+	var custStruct models.Customer
+
+	//Using mux.Vars to get value but we are getting empty map
 	// params := mux.Vars(&r)
-
-	// fmt.Println(params)
-
-	// var custStruct models.Customer
-	var xyz models.Customer
-
-	json.NewDecoder(r.Body).Decode(&xyz)
-	fmt.Println(xyz)
+	// fmt.Println(params)\
 	// err := mapstructure.Decode(params, &custStruct)
 	// if err != nil {
 	// 	log.Fatal("Cannot Decode the param values ", err)
 	// }
 	// fmt.Println(custStruct)
-	err := custController.CustSRV.AddCustomer(&xyz)
+
+	//using json to get input value from body
+	json.NewDecoder(r.Body).Decode(&custStruct)
+
+	err := custController.CustSRV.AddCustomer(&custStruct)
 	if err != nil {
 		log.Fatal("Customer not added ", err)
 	}
-	json.NewEncoder(w).Encode(xyz)
+	json.NewEncoder(w).Encode(custStruct)
 }

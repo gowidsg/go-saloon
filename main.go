@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
+	_ "time"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -23,18 +23,15 @@ func main() {
 	methods := handlers.AllowedMethods([]string{"PUT", "DELETE", "GET", "POST", "OPTION"})
 	origin := handlers.AllowedOrigins([]string{"*"})
 	srv := &http.Server{
-		Handler:      handlers.CORS(header, methods, origin)(route),
-		WriteTimeout: 150 * time.Second,
-		ReadTimeout:  150 * time.Second,
-		Addr:         ":9000",
+		Handler: handlers.CORS(header, methods, origin)(route),
+		// WriteTimeout: 150 * time.Second,
+		// ReadTimeout:  150 * time.Second,
+		Addr: ":9000",
 	}
 
-	fmt.Print("Hi above ini")
 	route.HandleFunc("/index", index)
 	initiateController(conn, route, repo)
-	fmt.Print("above listen")
 	log.Fatal(srv.ListenAndServe())
-	// go hold(srv)
 
 	fmt.Print("After listen")
 	defer func() {
@@ -51,8 +48,3 @@ func initiateController(conn *gorm.DB, route *mux.Router, repo *repository.Repos
 func index(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Welcome Customer"))
 }
-
-// func hold(srv *http.Server) {
-// 	time.Sleep(200 * time.Second)
-// 	srv.ListenAndServe()
-// }
