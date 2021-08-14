@@ -23,11 +23,18 @@ func NewCustomerController(custsrv *services.CustomerServices) *CustomerControll
 func (custController *CustomerController) CustomerRoute(route *mux.Router) {
 	fmt.Print("Hi Customer Route")
 	route.HandleFunc("/customer", custController.createCustomer).Methods("POST")
-	route.HandleFunc("/customer/{eid}", custController.getCustomer).Methods("POST")
+	route.HandleFunc("/customer", custController.getCustomer).Methods("GET")
 }
 
 func (custController *CustomerController) getCustomer(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(mux.Vars(r))
+	customers := []models.Customer{}
+	custController.CustSRV.GetAllCustomer(&customers)
+	fmt.Print(customers)
+	if len(customers) == 0 {
+		w.Write([]byte("Customer Table is empty"))
+		return
+	}
+	json.NewEncoder(w).Encode(customers)
 }
 
 func (custController *CustomerController) createCustomer(w http.ResponseWriter, r *http.Request) {

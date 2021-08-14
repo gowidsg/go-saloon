@@ -26,3 +26,9 @@ func (custsrv *CustomerServices) AddCustomer(cust *models.Customer) error {
 	ufw.Committing()
 	return err
 }
+
+func (custsrv *CustomerServices) GetAllCustomer(cust *[]models.Customer) error {
+	ufw := repository.NewUnitOfWork(custsrv.DB, true)
+	return custsrv.Repository.GetCustomer(ufw, cust)
+
+}
