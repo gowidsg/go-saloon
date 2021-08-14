@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	_ "time"
@@ -32,8 +31,6 @@ func main() {
 	route.HandleFunc("/index", index)
 	initiateController(conn, route, repo)
 	log.Fatal(srv.ListenAndServe())
-
-	fmt.Print("After listen")
 	defer func() {
 		conn.Close()
 	}()

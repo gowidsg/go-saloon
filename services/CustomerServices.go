@@ -16,7 +16,7 @@ func NewCustomerServices(db *gorm.DB, repo *repository.RepositorySRV) *CustomerS
 	return &CustomerServices{DB: db, Repository: repo}
 }
 
-func (custsrv *CustomerServices) AddCustomer(cust *models.Customer) error {
+func (custsrv *CustomerServices) AddCustomerService(cust *models.Customer) error {
 	ufw := repository.NewUnitOfWork(custsrv.DB, false)
 	err := custsrv.Repository.Add(ufw, cust)
 	if err != nil {
@@ -27,8 +27,37 @@ func (custsrv *CustomerServices) AddCustomer(cust *models.Customer) error {
 	return err
 }
 
-func (custsrv *CustomerServices) GetAllCustomer(cust *[]models.Customer) error {
+func (custsrv *CustomerServices) GetAllCustomerService(cust *[]models.Customer) error {
 	ufw := repository.NewUnitOfWork(custsrv.DB, true)
-	return custsrv.Repository.GetCustomer(ufw, cust)
+	return custsrv.Repository.GetAll(ufw, cust)
+
+}
+
+func (custsrv *CustomerServices) GetCustomerByUserIDService(cust *models.Customer) error {
+	ufw := repository.NewUnitOfWork(custsrv.DB, true)
+	return custsrv.Repository.GetByUserID(ufw, cust)
+}
+
+func (custsrv *CustomerServices) DeleteCustomerService(cust *models.Customer) error {
+	ufw := repository.NewUnitOfWork(custsrv.DB, false)
+	err := custsrv.Repository.Delete(ufw, cust)
+	if err != nil {
+		ufw.RollingBack()
+		return err
+	}
+	ufw.Committing()
+	return err
+
+}
+
+func (custsrv *CustomerServices) UpdateCustomerService(cust *models.Customer) error {
+	ufw := repository.NewUnitOfWork(custsrv.DB, false)
+	err := custsrv.Repository.Update(ufw, cust)
+	if err != nil {
+		ufw.RollingBack()
+		return err
+	}
+	ufw.Committing()
+	return err
 
 }
